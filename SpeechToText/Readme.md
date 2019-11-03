@@ -1,2 +1,2 @@
- - `pip install -r requirements.txt` for installing all dependencies
+ - `pip install -r requirements.txt` to install all dependencies
  - `python main.py` to run the project
