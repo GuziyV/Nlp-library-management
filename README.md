@@ -8,3 +8,10 @@ Goodreads API дозволить такі команди:
 * Створення власних колекцій ( shelves ), добавлання туди книг.
 
 https://www.goodreads.com/api/index#book.show_by_isbn
+
+Стек технологій
+
+ - Python (speech_recognition, flask)
+ - .Net Core Web api
+ - Javascript
+ 
