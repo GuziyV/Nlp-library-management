@@ -1,5 +1,6 @@
 import os
 from flask import Flask, request, redirect, url_for, flash,jsonify
+from semantic_analysis import getCommand
 from werkzeug.utils import secure_filename
 import speech_recognition as sr
 
@@ -16,7 +17,9 @@ def getText():
 	with file_audio as source:
 		audio_text = r.record(source)
 
-	return r.recognize_google(audio_text)
+	text = r.recognize_google(audio_text)
+	command = getCommand(text);
+	return "You said " + text + ", command: " + command
 
 if __name__ == '__main__':
     app.run(host = 'localhost')
