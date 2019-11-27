@@ -5,6 +5,7 @@ import wave
 import time
 import os
 import requests
+import GoodreadsService
 
 Threshold = 50           #optimal val = 50, set to 500 for debug
 
@@ -123,7 +124,11 @@ class Recorder:
             if rms_val > Threshold:
                 self.record()
 
-a = Recorder()
-a.postToTransformService(r'E:\GodDamnBathSalts\Nlp-library-management\SpeechRecord\records\2.wav')
+#a = Recorder()
+#a.postToTransformService(r'E:\GodDamnBathSalts\Nlp-library-management\SpeechRecord\records\2.wav')
 
 #a.listen()
+
+params = [ 'alice', 'in', 'the wonderland', 'lewis', 'sdfgdfsgdfsgsdf' ]
+serv = GoodreadsService.GoodreadsService()
+sho = serv.addBook(params)
