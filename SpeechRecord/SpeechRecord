@@ -131,4 +131,8 @@ class Recorder:
 
 params = [ 'alice', 'in', 'the wonderland', 'lewis', 'sdfgdfsgdfsgsdf' ]
 serv = GoodreadsService.GoodreadsService()
-sho = serv.addBook(params)
+#sho = serv.addBook(params)
+#serv.createShelf();
+serv.getShelfBooks()
+serv.removeBook('2375385')
+
