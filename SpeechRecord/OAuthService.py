@@ -1,8 +1,8 @@
 import oauth2 as oauth
 import urlparse
 
-client_id = "HWhaO97bSHYSNloJ67lig"
-secret = "okKwdxgll4kDz1u7XwitE7j9OiCmY9WN7IozKt204"
+client_id = "IC5itDAhtayZ9ZIRc77qrQ"
+secret = "dLvs9iojQZX3KayoSKnkpxJIhkQq1kuPxhl636pCI"
 
 request_token_url = "https://www.goodreads.com/oauth/request_token"
 authorize_url = "https://www.goodreads.com/oauth/authorize"
@@ -10,8 +10,8 @@ access_token_url = "https://www.goodreads.com/oauth/access_token"
 base_url = "https://www.goodreads.com/"
 
 #hardcoded for my machine, vova zamytu sobi sviy token, use getToken()
-oauth_token_secret = 'N3DPTj26MrGUBBaf0RzOkJzCnnYz1zYVASTtlvsLFY'
-oauth_token = 'ArcrtRTlOVL8kFMy1HoPA'
+oauth_token_secret = '63jA8OJCgd7rG00UfzAjyPrPZSbFu9pQvaZiMHewQ'
+oauth_token = 'UR13Cr1IIDWUNoOiuEtDpg'
 
 class OAuthService:
 
@@ -42,11 +42,12 @@ class OAuthService:
         response, content = client.request(unicode(access_token_url, "utf-8"), 'POST')
 
         access_token = dict(urlparse.parse_qsl(content))
-        return access_token
+        token = oauth.Token(access_token['oauth_token'], access_token['oauth_token_secret'])
+        return token
 
     def getClient(self):
         consumer = oauth.Consumer(key=client_id,secret=secret)
+        #token = self.getToken()   #use if 401
         token = oauth.Token(oauth_token, oauth_token_secret)
-
         client = oauth.Client(consumer, token)
         return client;

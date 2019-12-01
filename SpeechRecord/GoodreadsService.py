@@ -14,9 +14,10 @@ searchEndp = "/search/index.xml"
 listShelfEndp = "/shelf/list.xml"
 addShelfEndp =  "/user_shelves.xml"
 addBookToShelfEndp = "/shelf/add_to_shelf.xml"
-getShelfBooksEndp = "/review/list.xml?v=2 "
+getShelfBooksEndp = "/review/list.xml?v=2"
+getBookByIdEndp = '/book/show.xml'
 
-key = "HWhaO97bSHYSNloJ67lig"
+key = "IC5itDAhtayZ9ZIRc77qrQ"
 shelfName = 'mybooks'
 
 separator = " | "
@@ -36,16 +37,23 @@ class GoodreadsService:
         self.clientOauth  = serv.getClient();
 
     def SearchByKeywords( self, args ):
+        print('Searching for ' + ' '.join(args))
         argsParam = separator.join(args)
         payload = { 'key': key, 'q':argsParam }
         url = base + searchEndp
 
         response = requests.get(url,params=payload)
-        return  response
+        parsedResp = self.parseXmlBooksRespone(response.text)
+        return  parsedResp
+
+    def getBookId(self, keywords):
+        books = self.SearchByKeywords(keywords);
+        print("Getting id for a book: " + books[0]['best_book']['title']);
+        bookId = books[0]['best_book']['id']
+        return  bookId;
 
     def addBook(self, args):
-        bookResponse = self.SearchByKeywords(args)
-        booksArray = self.parseXmlBooksRespone(bookResponse);
+        booksArray = self.SearchByKeywords(args)
 
         print("Adding book to a shelf: " + booksArray[0]['best_book']['title']);
 
@@ -56,11 +64,20 @@ class GoodreadsService:
                                            'POST', body, headers)
         print(response)
 
+    def getBookById(self,id):
+        url = base + getBookByIdEndp;
+        payload = {'key': key, 'format': 'xml', 'id': id}
+        response = requests.get(url, params=payload)
+        parsedResp = self.parseXmlBookRespone(response)
+        dfq = 2
+        return parsedResp
 
     def removeBook(self, id):
         body = urllib.urlencode({'name': shelfName, 'book_id': id, 'a' : 'remove'})
         headers = {'content-type': 'application/x-www-form-urlencoded'}
         url = base + addBookToShelfEndp
+        book = self.getBookById(id);
+        print("Removing book from shelf: " + book['title']);
         response, content = self.clientOauth.request(url,
                                            'POST', body, headers)
         print(response)
@@ -77,7 +94,7 @@ class GoodreadsService:
         body = urllib.urlencode({'user_shelf[name]': shelfName})
         headers = {'content-type': 'application/x-www-form-urlencoded'}
         url = base + addShelfEndp
-        self.clientOauth.request(url,'POST', body, headers)
+        return self.clientOauth.request(url,'POST', body, headers)
 
 
     def listShelfs(self):
@@ -113,4 +130,13 @@ class GoodreadsService:
             yolo['best_book'] = book;
             booksArray.append(yolo)
         return booksArray;
+
+    def parseXmlBookRespone(self, response):
+        xmlRoot = ElementTree.ElementTree(ET.fromstring(response.text.encode('utf-8')))
+
+        book =  xmlRoot.getroot()[1] # feel free to provide easier way to get complex objects
+        yolo = dict()
+        for what in book._children:
+            yolo[what.tag] = what.text
+        return yolo;
 
