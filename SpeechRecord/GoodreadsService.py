@@ -16,6 +16,7 @@ addShelfEndp =  "/user_shelves.xml"
 addBookToShelfEndp = "/shelf/add_to_shelf.xml"
 getShelfBooksEndp = "/review/list.xml?v=2"
 getBookByIdEndp = '/book/show.xml'
+reviewEndp = '/review.xml'
 
 key = "IC5itDAhtayZ9ZIRc77qrQ"
 shelfName = 'mybooks'
@@ -130,6 +131,14 @@ class GoodreadsService:
             yolo['best_book'] = book;
             booksArray.append(yolo)
         return booksArray;
+
+    def addReview(self, text, id):
+        book = self.getBookById(id)
+        print('Adding review for ' + book['title'] )
+        body = urllib.urlencode({'review[review]': text, 'book_id': id})
+        headers = {'content-type': 'application/x-www-form-urlencoded'}
+        url = base + reviewEndp
+        return self.clientOauth.request(url, 'POST', body, headers)
 
     def parseXmlBookRespone(self, response):
         xmlRoot = ElementTree.ElementTree(ET.fromstring(response.text.encode('utf-8')))
