@@ -19,7 +19,7 @@ def getText():
 
 	text = r.recognize_google(audio_text)
 	command = getCommand(text);
-	return "You said " + text + ", command: " + command
+	return command
 
 if __name__ == '__main__':
     app.run(host = 'localhost')
