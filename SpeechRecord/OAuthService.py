@@ -1,5 +1,5 @@
 import oauth2 as oauth
-import urlparse
+import urllib.parse as urlparse
 
 client_id = "IC5itDAhtayZ9ZIRc77qrQ"
 secret = "dLvs9iojQZX3KayoSKnkpxJIhkQq1kuPxhl636pCI"

@@ -2,7 +2,7 @@ import os
 import requests
 import xml.etree.ElementTree as ET
 from xml.etree import ElementTree
-import urllib
+import urllib 
 import OAuthService
 import xml.dom.minidom
 
@@ -58,12 +58,11 @@ class GoodreadsService:
 
         print("Adding book to a shelf: " + booksArray[0]['best_book']['title']);
 
-        body = urllib.urlencode({'name': shelfName, 'book_id': booksArray[0]['best_book']['id']})
+        body = urllib.parse.urlencode({'name': shelfName, 'book_id': booksArray[0]['best_book']['id']})
         headers = {'content-type': 'application/x-www-form-urlencoded'}
         url = base + addBookToShelfEndp
         response, content = self.clientOauth.request(url,
                                            'POST', body, headers)
-        print(response)
 
     def getBookById(self,id):
         url = base + getBookByIdEndp;
@@ -117,16 +116,16 @@ class GoodreadsService:
         print(content)
 
     def parseXmlBooksRespone(self, response):
-        xmlRoot = ElementTree.ElementTree(ET.fromstring(response.text.encode('utf-8')))
+        xmlRoot = ElementTree.ElementTree(ET.fromstring(response))
 
         booksArray = []
 
         for x in xmlRoot.getroot()[1][6]:  # feel free to provide easier way to get complex objects
             yolo = dict()
-            for what in x._children:
+            for what in x:
                 yolo[what.tag] = what.text
             book = dict()
-            for oops in x._children[8]:
+            for oops in x[8]:
                 book[oops.tag] = oops.text
             yolo['best_book'] = book;
             booksArray.append(yolo)
