@@ -73,14 +73,13 @@ class GoodreadsService:
         return parsedResp
 
     def removeBook(self, id):
-        body = urllib.urlencode({'name': shelfName, 'book_id': id, 'a' : 'remove'})
+        body = urllib.parse.urlencode({'name': shelfName, 'book_id': id, 'a' : 'remove'})
         headers = {'content-type': 'application/x-www-form-urlencoded'}
         url = base + addBookToShelfEndp
         book = self.getBookById(id);
         print("Removing book from shelf: " + book['title']);
         response, content = self.clientOauth.request(url,
                                            'POST', body, headers)
-        print(response)
 
     def getUserId(self):
         url = base + '/api/auth_user'
@@ -102,7 +101,6 @@ class GoodreadsService:
         id = self.getUserId()
         payload = {'key': key, 'user_id': id}
         response = requests.get(url, params=payload)
-        print(response.text)
 
     def getShelfBooks(self):
         id = self.getUserId()
@@ -134,7 +132,7 @@ class GoodreadsService:
     def addReview(self, text, id):
         book = self.getBookById(id)
         print('Adding review for ' + book['title'] )
-        body = urllib.urlencode({'review[review]': text, 'book_id': id})
+        body = urllib.parse.urlencode({'review[review]': text, 'book_id': id})
         headers = {'content-type': 'application/x-www-form-urlencoded'}
         url = base + reviewEndp
         return self.clientOauth.request(url, 'POST', body, headers)
@@ -144,7 +142,7 @@ class GoodreadsService:
 
         book =  xmlRoot.getroot()[1] # feel free to provide easier way to get complex objects
         yolo = dict()
-        for what in book._children:
+        for what in book:
             yolo[what.tag] = what.text
         return yolo;
 

@@ -84,10 +84,10 @@ class Recorder:
             bookName = input('Please print the name of the book: ').split(" ")
             bookId = serv.getBookId(bookName)
             review = input('Please print the review of the book: ')
-            serv.addReview(bookName, bookId, review)
+            serv.addReview(review, bookId)
         elif response == Command.RemoveBook.name :  
             userInput = input('Please print the name of the book: ').split(" ")
-            serv.removeBook(userInput)
+            serv.removeBook(serv.getBookId(userInput))
 
     def write(self, recording):
         n_files = len(os.listdir(f_name_directory))
