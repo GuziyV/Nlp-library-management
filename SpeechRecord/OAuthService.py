@@ -1,5 +1,7 @@
 import oauth2 as oauth
-import urlparse
+import urllib.parse as urlparse
+
+from freetype import unicode
 
 client_id = "IC5itDAhtayZ9ZIRc77qrQ"
 secret = "dLvs9iojQZX3KayoSKnkpxJIhkQq1kuPxhl636pCI"
@@ -37,7 +39,7 @@ class OAuthService:
         while accepted.lower() == 'n':
             # you need to access the authorize_link via a browser,
             # and proceed to manually authorize the consumer
-            accepted = raw_input('Accepted? (y/n) ')
+            accepted = input('Accepted? (y/n) ')
 
         response, content = client.request(unicode(access_token_url, "utf-8"), 'POST')
 

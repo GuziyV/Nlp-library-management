@@ -2,11 +2,10 @@ import os
 import requests
 import xml.etree.ElementTree as ET
 from xml.etree import ElementTree
-import urllib
+import  urllib.parse as  urllib
 import OAuthService
 import xml.dom.minidom
 
-import xmltodict
 
 base = "https://www.goodreads.com"
 
@@ -117,16 +116,16 @@ class GoodreadsService:
         print(content)
 
     def parseXmlBooksRespone(self, response):
-        xmlRoot = ElementTree.ElementTree(ET.fromstring(response.text.encode('utf-8')))
+        xmlRoot = ElementTree.ElementTree(ET.fromstring(response))
 
         booksArray = []
 
         for x in xmlRoot.getroot()[1][6]:  # feel free to provide easier way to get complex objects
             yolo = dict()
-            for what in x._children:
+            for what in x:
                 yolo[what.tag] = what.text
             book = dict()
-            for oops in x._children[8]:
+            for oops in x[8]:
                 book[oops.tag] = oops.text
             yolo['best_book'] = book;
             booksArray.append(yolo)
@@ -141,11 +140,11 @@ class GoodreadsService:
         return self.clientOauth.request(url, 'POST', body, headers)
 
     def parseXmlBookRespone(self, response):
-        xmlRoot = ElementTree.ElementTree(ET.fromstring(response.text.encode('utf-8')))
+        xmlRoot = ElementTree.ElementTree(ET.fromstring(response.encode('utf-8')))
 
         book =  xmlRoot.getroot()[1] # feel free to provide easier way to get complex objects
         yolo = dict()
-        for what in book._children:
+        for what in book:
             yolo[what.tag] = what.text
         return yolo;
 

@@ -7,6 +7,7 @@ import os
 import requests
 from enum import Enum
 import GoodreadsService
+import json
 
 Threshold = 50           #optimal val = 50, set to 500 for debug
 
@@ -76,18 +77,20 @@ class Recorder:
         r = requests.post(url=speechToTexEndpoint, files=data);
 
         response = r.text;
+        response = json.loads(response)
         print(response);
-        if response == Command.AddBook.name :
-            userInput = input('Please print the name of the book: ').split(" ")
-            serv.addBook(userInput)
-        elif response == Command.AddComment.name : 
-            bookName = input('Please print the name of the book: ').split(" ")
-            bookId = serv.getBookId(bookName)
+        if response['command'] == Command.AddBook.name :
+            #userInput = input('Please print the name of the book: ').split(" ")
+            serv.addBook(response['text'].replace('add','').replace('please','').split())
+        elif response['command'] == Command.AddComment.name :
+            #bookName = input('Please print the name of the book: ').split(" ")
+            bookId = serv.getBookId(response['text'].replace('remove','').split())
             review = input('Please print the review of the book: ')
-            serv.addReview(bookName, bookId, review)
-        elif response == Command.RemoveBook.name :  
-            userInput = input('Please print the name of the book: ').split(" ")
-            serv.removeBook(userInput)
+            serv.addReview(review, bookId)
+        elif response['command'] == Command.RemoveBook.name :
+            #userInput = input('Please print the name of the book: ').split(" ")
+            bookId = serv.getBookId(response['text'].replace('add','').split())
+            serv.removeBook(bookId  )
 
     def write(self, recording):
         n_files = len(os.listdir(f_name_directory))
@@ -143,6 +146,6 @@ class Recorder:
                 self.record()
 
 a = Recorder()
-a.postToTransformService(r'E:\4kurs\DV\Nlp-library-management\SpeechRecord\records\2.wav')
+#a.postToTransformService(r'E:\GodDamnBathSalts\Nlp-library-management\SpeechRecord\records\19.wav')
 
 a.listen()
