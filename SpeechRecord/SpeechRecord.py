@@ -9,6 +9,8 @@ from enum import Enum
 import GoodreadsService
 import json
 
+import Prolog
+
 Threshold = 50           #optimal val = 50, set to 500 for debug
 
 speechToTexEndpoint = 'http://localhost:5000/getText'
@@ -146,6 +148,7 @@ class Recorder:
                 self.record()
 
 a = Recorder()
+print(Prolog.getBook('mark'))
 #a.postToTransformService(r'E:\GodDamnBathSalts\Nlp-library-management\SpeechRecord\records\19.wav')
 
 a.listen()

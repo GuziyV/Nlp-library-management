@@ -15,12 +15,9 @@ prolog.assertz("friend(steve,john)")
 prolog.assertz("friend(mark,kate)")
 prolog.assertz("friend(emily,mark)")
 prolog.assertz("get_friend(A,B):- friend(A,B);friend(B,A)")
-prolog.assertz("get_far_friend(A,B):- friend(A,B);friend(B,A)")
-prolog.assertz("get_book(A,B):- likes(A,B);get_friend(A,C),likes(C,B);get_friend(A,C),get_friend(C,F),likes(F,B)")
+prolog.assertz("get_book(A,B):- likes(A,B);get_friend(A,C),likes(C,B);get_friend(A,C),get_friend(C,D),likes(D,B);get_friend(A,C),get_friend(C,D),get_friend(D,F),likes(F,B)")
 
 
-def getLikes(name):
-    l1 =  list(prolog.query("get_book(%s,X)"%name))
+def getBook(name):
+    l1 =  list(prolog.query("get_book(%s,X)"%name))[0]['X']
     return l1
-
-print(getLikes('michael'))
