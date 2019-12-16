@@ -12,6 +12,7 @@ class Command(Enum):
     AddBook = 1
     RemoveBook = 2
     AddComment = 3
+    MyName = 4
 
 def getCommand(text):
     training_set = [
@@ -37,6 +38,11 @@ def getCommand(text):
         ["Drop a line about a book", Command.AddComment.name],
         ["Add remark", Command.AddComment.name],
         ["Comment", Command.AddComment.name],
+
+        ["My name is John", Command.MyName.name],
+        ["I'm", Command.MyName.name],
+        ["I am", Command.MyName.name],
+        ["Name", Command.MyName.name],
         [text, "dummy"]
     ]
 

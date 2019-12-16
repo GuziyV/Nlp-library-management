@@ -27,7 +27,8 @@ TIMEOUT_LENGTH = 5
 class Command(Enum):
     AddBook = 1
     RemoveBook = 2
-    AddComment = 3
+    AddComment = 3 
+    MyName = 4
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 f_name_directory = dir_path + r'\records'
@@ -92,7 +93,12 @@ class Recorder:
         elif response['command'] == Command.RemoveBook.name :
             #userInput = input('Please print the name of the book: ').split(" ")
             bookId = serv.getBookId(response['text'].replace('add','').split())
-            serv.removeBook(bookId  )
+            serv.removeBook(bookId)
+        elif response['command'] == Command.MyName.name :
+            print("your name is ")
+            text = response['text']
+            name = text.split()[-1]
+            print(name)
 
     def write(self, recording):
         n_files = len(os.listdir(f_name_directory))
