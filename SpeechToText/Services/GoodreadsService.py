@@ -148,3 +148,14 @@ class GoodreadsService:
             yolo[what.tag] = what.text
         return yolo;
 
+    def postToTransformService(self, command, text):
+        if True :
+            self.addBook(text.replace('add','').replace('please','').split())
+        elif command == "Add comment" :
+            bookId = self.getBookId(text.replace('remove','').split())
+            review = input('Please print the review of the book: ')
+            self.addReview(review, bookId)
+        elif command == "Remove book" :
+            bookId = self.getBookId(text.replace('add','').split())
+            self.removeBook(bookId)
+

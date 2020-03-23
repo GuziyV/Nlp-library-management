@@ -38,11 +38,6 @@ def getCommand(text):
         ["Drop a line about a book", Command.AddComment.name],
         ["Add remark", Command.AddComment.name],
         ["Comment", Command.AddComment.name],
-
-        ["My name is John", Command.MyName.name],
-        ["I'm", Command.MyName.name],
-        ["I am", Command.MyName.name],
-        ["Name", Command.MyName.name],
         [text, "dummy"]
     ]
 
