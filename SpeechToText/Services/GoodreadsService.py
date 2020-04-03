@@ -3,7 +3,7 @@ import requests
 import xml.etree.ElementTree as ET
 from xml.etree import ElementTree
 import  urllib.parse as  urllib
-import OAuthService
+from .OAuthService import OAuthService
 import xml.dom.minidom
 
 
@@ -33,7 +33,7 @@ class GoodreadsService:
     clientOauth = {}
 
     def __init__(self):
-        serv = OAuthService.OAuthService()
+        serv = OAuthService()
         self.clientOauth  = serv.getClient();
 
     def SearchByKeywords( self, args ):
@@ -51,18 +51,21 @@ class GoodreadsService:
         print("Getting id for a book: " + books[0]['best_book']['title']);
         bookId = books[0]['best_book']['id']
         return  bookId;
+    
+    def replaceNotNeeded(self, text):
+            return text.replace('add','').replace('book','').replace('please','').replace('remove', '').replace('comment', '')
 
     def addBook(self, args):
         booksArray = self.SearchByKeywords(args)
 
-        print("Adding book to a shelf: " + booksArray[0]['best_book']['title']);
+        resp = "Adding book to a shelf: " + booksArray[0]['best_book']['title'] + "...";
 
         body = urllib.urlencode({'name': shelfName, 'book_id': booksArray[0]['best_book']['id']})
         headers = {'content-type': 'application/x-www-form-urlencoded'}
         url = base + addBookToShelfEndp
         response, content = self.clientOauth.request(url,
                                            'POST', body, headers)
-        print(response)
+        return resp + "\n" + "Book was added."
 
     def getBookById(self,id):
         url = base + getBookByIdEndp;
@@ -77,10 +80,10 @@ class GoodreadsService:
         headers = {'content-type': 'application/x-www-form-urlencoded'}
         url = base + addBookToShelfEndp
         book = self.getBookById(id);
-        print("Removing book from shelf: " + book['title']);
+        resp = "Removing book from shelf: " + book['title'] + "...";
         response, content = self.clientOauth.request(url,
                                            'POST', body, headers)
-        print(response)
+        return resp + "\n" + "Book was removed."
 
     def getUserId(self):
         url = base + '/api/auth_user'
@@ -140,7 +143,7 @@ class GoodreadsService:
         return self.clientOauth.request(url, 'POST', body, headers)
 
     def parseXmlBookRespone(self, response):
-        xmlRoot = ElementTree.ElementTree(ET.fromstring(response.encode('utf-8')))
+        xmlRoot = ElementTree.ElementTree(ET.fromstring(response.text.encode('utf-8')))
 
         book =  xmlRoot.getroot()[1] # feel free to provide easier way to get complex objects
         yolo = dict()
@@ -149,13 +152,13 @@ class GoodreadsService:
         return yolo;
 
     def postToTransformService(self, command, text):
-        if True :
-            self.addBook(text.replace('add','').replace('please','').split())
-        elif command == "Add comment" :
-            bookId = self.getBookId(text.replace('remove','').split())
+        if command == "AddBook" :
+            return self.addBook(self.replaceNotNeeded(text).split())
+        elif command == "AddComment" :
+            bookId = self.getBookId(self.replaceNotNeeded(text).split())
             review = input('Please print the review of the book: ')
             self.addReview(review, bookId)
-        elif command == "Remove book" :
-            bookId = self.getBookId(text.replace('add','').split())
-            self.removeBook(bookId)
+        elif command == "RemoveBook" :
+            bookId = self.getBookId(self.replaceNotNeeded(text).split())
+            return self.removeBook(bookId)
 
