@@ -13,8 +13,8 @@ goodReadService = GoodreadsService()
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/getText', methods=['POST'])
-def getText():
+@app.route('/sendFile', methods=['POST'])
+def sendFile():
 	f = request.files['file'].read()
 	#with open('file.wav', 'wb') as f_vid:
  	#	f_vid.write(f)
@@ -25,10 +25,21 @@ def getText():
 	with file_audio as source:
 		audio_text = r.record(source)
 
-	text = "remove book Alice in wonderland"#r.recognize_google(audio_text)
+	text = "comment Alice in wonderland"#r.recognize_google(audio_text)
 	command = getCommand(text)
 
+	if (command == "AddComment"):
+    		return {
+				'text': text,
+				'command': command,
+			};
+
 	return goodReadService.postToTransformService(command, text)
+
+@app.route('/sendReview', methods=['POST'])
+def getText():
+	json = request.get_json();
+	return goodReadService.addReview(json["review"], json["saidText"])
 
 if __name__ == '__main__':
     app.run(host = 'localhost')

@@ -134,13 +134,15 @@ class GoodreadsService:
             booksArray.append(yolo)
         return booksArray;
 
-    def addReview(self, text, id):
-        book = self.getBookById(id)
-        print('Adding review for ' + book['title'] )
-        body = urllib.urlencode({'review[review]': text, 'book_id': id})
+    def addReview(self, review, saidText):
+        bookId = self.getBookId(self.replaceNotNeeded(saidText).split())
+        book = self.getBookById(bookId)
+        resp = 'Adding review for ' + book['title']
+        body = urllib.urlencode({'review[review]': review, 'book_id': id})
         headers = {'content-type': 'application/x-www-form-urlencoded'}
         url = base + reviewEndp
-        return self.clientOauth.request(url, 'POST', body, headers)
+        self.clientOauth.request(url, 'POST', body, headers)
+        return resp + "\nReview was added"
 
     def parseXmlBookRespone(self, response):
         xmlRoot = ElementTree.ElementTree(ET.fromstring(response.text.encode('utf-8')))
@@ -154,10 +156,6 @@ class GoodreadsService:
     def postToTransformService(self, command, text):
         if command == "AddBook" :
             return self.addBook(self.replaceNotNeeded(text).split())
-        elif command == "AddComment" :
-            bookId = self.getBookId(self.replaceNotNeeded(text).split())
-            review = input('Please print the review of the book: ')
-            self.addReview(review, bookId)
         elif command == "RemoveBook" :
             bookId = self.getBookId(self.replaceNotNeeded(text).split())
             return self.removeBook(bookId)
