@@ -13,15 +13,9 @@ import soundfile as sf
 from pydub import AudioSegment
 import subprocess
 
-goodReadService = GoodreadsService()
-app = Flask(__name__)
-CORS(app)
-
-@app.route('/sendFile', methods=['POST'])
-def sendFile():
-	f = request.files['file'].read()
+def fileToText(f):
 	with open('file.mp3', 'wb') as f_vid:
- 		f_vid.write(f)
+		f_vid.write(f)
 
 	subprocess.run(["ffmpeg.exe", "-i", "file.mp3", "file.wav", "-y"])
 
@@ -31,21 +25,46 @@ def sendFile():
 	with file_audio as source:
 		audio_text = r.record(source)
 
-	text = r.recognize_google(audio_text)
+	return r.recognize_google(audio_text)
+
+goodReadService = GoodreadsService()
+app = Flask(__name__)
+CORS(app)
+
+@app.route('/getCommand', methods=['POST'])
+def command():
+	f = request.files['file'].read()
+
+	text = fileToText(f)
 	command = getCommand(text)
 
-	if (command == "AddComment"):
-    		return {
-				'text': text,
-				'command': command,
-			};
+	return command
 
-	return goodReadService.postToTransformService(command, text)
+@app.route('/getText', methods=['POST'])
+def getText():
+	f = request.files['file'].read()
+
+	return fileToText(f)
 
 @app.route('/sendReview', methods=['POST'])
-def getText():
-	json = request.get_json();
-	return goodReadService.addReview(json["review"], json["saidText"])
+def sendReview():
+	json = request.get_json()
+	return goodReadService.addReview("Best book in my childhood", "Harry Potter")
+	#return goodReadService.addReview(json["review"], json["book"])
+
+@app.route('/addBook', methods=['POST'])
+def addBook():
+	json = request.get_json()
+	return goodReadService.addBook(json["book"])
+	#return goodReadService.addBook("Sherlock holmes")
+
+@app.route('/removeBook', methods=['POST'])
+def removeBook():
+	json = request.get_json()
+	return goodReadService.removeBook(json["book"])
+	#return goodReadService.removeBook("Sherlock holmes")
+
 
 if __name__ == '__main__':
     app.run(host = 'localhost')
+

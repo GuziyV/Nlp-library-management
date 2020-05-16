@@ -37,9 +37,8 @@ class GoodreadsService:
         self.clientOauth  = serv.getClient();
 
     def SearchByKeywords( self, args ):
-        print('Searching for ' + ' '.join(args))
-        argsParam = separator.join(args)
-        payload = { 'key': key, 'q':argsParam }
+        print('Searching for ' + args)
+        payload = { 'key': key, 'q':args }
         url = base + searchEndp
 
         response = requests.get(url,params=payload)
@@ -51,9 +50,6 @@ class GoodreadsService:
         print("Getting id for a book: " + books[0]['best_book']['title']);
         bookId = books[0]['best_book']['id']
         return  bookId;
-    
-    def replaceNotNeeded(self, text):
-            return text.replace('add','').replace('book','').replace('please','').replace('remove', '').replace('comment', '')
 
     def addBook(self, args):
         booksArray = self.SearchByKeywords(args)
@@ -75,7 +71,9 @@ class GoodreadsService:
         dfq = 2
         return parsedResp
 
-    def removeBook(self, id):
+    def removeBook(self, args):
+        booksArray = self.SearchByKeywords(args)
+        id =  booksArray[0]['best_book']['id']
         body = urllib.urlencode({'name': shelfName, 'book_id': id, 'a' : 'remove'})
         headers = {'content-type': 'application/x-www-form-urlencoded'}
         url = base + addBookToShelfEndp
@@ -135,10 +133,10 @@ class GoodreadsService:
         return booksArray;
 
     def addReview(self, review, saidText):
-        bookId = self.getBookId(self.replaceNotNeeded(saidText).split())
+        bookId = self.getBookId(saidText)
         book = self.getBookById(bookId)
         resp = 'Adding review for ' + book['title']
-        body = urllib.urlencode({'review[review]': review, 'book_id': id})
+        body = urllib.urlencode({'review[review]': review, 'book_id': bookId, 'shelf': shelfName})
         headers = {'content-type': 'application/x-www-form-urlencoded'}
         url = base + reviewEndp
         self.clientOauth.request(url, 'POST', body, headers)
@@ -155,8 +153,8 @@ class GoodreadsService:
 
     def postToTransformService(self, command, text):
         if command == "AddBook" :
-            return self.addBook(self.replaceNotNeeded(text).split())
+            return self.addBook(text.split())
         elif command == "RemoveBook" :
-            bookId = self.getBookId(self.replaceNotNeeded(text).split())
+            bookId = self.getBookId(text.split())
             return self.removeBook(bookId)
 
