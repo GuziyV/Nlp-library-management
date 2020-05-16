@@ -8,6 +8,10 @@ sys.path.insert(1, './Services')
 from Services.GoodreadsService import GoodreadsService
 from flask_cors import CORS
 import base64
+import wavio
+import soundfile as sf 
+from pydub import AudioSegment
+import subprocess
 
 goodReadService = GoodreadsService()
 app = Flask(__name__)
@@ -16,16 +20,18 @@ CORS(app)
 @app.route('/sendFile', methods=['POST'])
 def sendFile():
 	f = request.files['file'].read()
-	#with open('file.wav', 'wb') as f_vid:
- 	#	f_vid.write(f)
+	with open('file.mp3', 'wb') as f_vid:
+ 		f_vid.write(f)
 
-	file_audio = sr.AudioFile('file.wav')
+	subprocess.run(["ffmpeg.exe", "-i", "file.mp3", "file.wav", "-y"])
+
+	file_audio = sr.WavFile('file.wav')
 
 	r = sr.Recognizer()
 	with file_audio as source:
 		audio_text = r.record(source)
 
-	text = "comment Alice in wonderland"#r.recognize_google(audio_text)
+	text = r.recognize_google(audio_text)
 	command = getCommand(text)
 
 	if (command == "AddComment"):

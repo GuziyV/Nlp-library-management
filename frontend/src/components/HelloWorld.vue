@@ -1,9 +1,10 @@
 <template>
 	<div class="app">
 		<audio-recorder
-		format="wav"
-		filename="file.wav"
+		format="mp3"
+		filename="file.mp3"
 		class="audio-recorder"
+		:bit-rate="192"
 		:after-recording="callback"
 		:attempts="3"
 		:time="2"/>
